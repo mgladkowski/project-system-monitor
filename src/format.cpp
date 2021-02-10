@@ -4,7 +4,7 @@
 
 #include "format.h"
 
-/* Format an elapsed time string from integer seconds
+/* Return an elapsed time string from integer seconds
     INPUT  : Long int measuring seconds
     OUTPUT : HH:MM:SS
 */
@@ -20,7 +20,7 @@ std::string Format::ElapsedTime(long seconds) {
     int mm = (int)(seconds - hh*3600) / 60;
     int ss = (int)(seconds - hh*3600 - mm*60);
 
-    // format an output using a stringstream
+    // format the time using a stringstream
 
     std::stringstream ssout;
     
