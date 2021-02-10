@@ -13,18 +13,36 @@ using std::vector;
  * File helpers
  */
 
-// Returns file lines containing any of multiple keywords
-vector<string> Helpers::grep(const string filename, const vector<string> keys) {
+// Returns first file line containing a keyword
+string Helpers::grep(const string& filename, const string key) {
 
-    vector<string> output;
+    string output = "";
+    string line;
+
+    std::ifstream fs(filename);
+    if (fs.is_open()) {
+        while (std::getline(fs, line)) {
+            if (line.find(key) != std::string::npos)
+                return line;
+        }
+    }
+    return output;
+}
+
+
+// Returns all file lines containing any of multiple keywords
+vector<string> Helpers::grep(const string& filename, const vector<string> keys) {
+
+    vector<string> output = {};
     string line;
 
     std::ifstream fs(filename);
     if (fs.is_open()) {
         while (std::getline(fs, line)) {
             for (const string& key : keys) {
-                if (line.find(key))
-                    output.push_back(line.c_str());
+                if (line.find(key) != std::string::npos) {
+                    output.push_back(line);
+                }
             }
         }
     }

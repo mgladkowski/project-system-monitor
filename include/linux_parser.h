@@ -46,10 +46,10 @@ enum CPUStates {
 };
 
 vector<string> CpuUtilization();
-long Jiffies();
-long ActiveJiffies();
-long ActiveJiffies(int pid);
-long IdleJiffies();
+unsigned long Jiffies();
+unsigned long ActiveJiffies();
+unsigned long ActiveJiffies(int pid);
+unsigned long IdleJiffies();
 
 // Processes
 string Command(int pid);

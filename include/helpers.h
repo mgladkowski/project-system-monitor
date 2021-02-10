@@ -11,8 +11,9 @@ using std::vector;
 
 namespace Helpers {
 
-    vector<string> grep(const string filename, const vector<string> keys);
-    
+    string grep(const string& filename, const string key);
+    vector<string> grep(const string& filename, const vector<string> keys);
+
     string ltrim(const string& value);
     string rtrim(const string& value);
     string trim(const string& value);
