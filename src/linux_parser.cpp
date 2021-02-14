@@ -1,16 +1,8 @@
 #include <dirent.h>
 #include <unistd.h>
-#include <string>
-#include <vector>
-#include <iostream>
 
 #include "helpers.h"
 #include "linux_parser.h"
-
-using std::stof;
-using std::string;
-using std::to_string;
-using std::vector;
 
 
 // Read and return operating system kernel
@@ -128,43 +120,55 @@ unsigned long LinuxParser::UpTime() {
 }
 
 
-// Read and return the number of jiffies for the system
-unsigned long LinuxParser::Jiffies() {
+/* Read and return CPU utilization
+ *
+ * Returns a vector of cpu data:
+ * First item is expected to be aggregate
+ * Subsequent items are individual cores
+ * 
+ * First array index is time_total
+ * Second array index is time_active
+ */
+map<string, array<unsigned long long,2>> LinuxParser::CpuUtilization() {
 
-	string value = "";
-	string cut;
-	string line = Helpers::grep(kProcDirectory + kStatFilename, "processes");
+	map<string, array<unsigned long long, 2>> output = {};
 
-	std::istringstream linestream(line);
-	linestream >> cut >> value;
-	return strtoul(value.c_str(), NULL, 0);
-}
+	vector<string> lines = Helpers::grep(kProcDirectory + kStatFilename, vector<string>{"cpu"});
 
+	// parsing all CPU lines so we have each core as well
+	for (string& line : lines) {
 
-// Read and return the number of active jiffies for a PID
-unsigned long LinuxParser::ActiveJiffies(int pid) {
+		// extract jiffy data from line
 
-	return 0;
-}
+		string key = "";
+		unsigned long long t[10];
 
+		std::istringstream linestream(line);
+		linestream >> key >> t[kUser_] 
+						  >> t[kNice_] 
+						  >> t[kSystem_]
+						  >> t[kIdle_]
+						  >> t[kIOwait_]
+						  >> t[kIRQ_]
+						  >> t[kSoftIRQ_]
+						  >> t[kSteal_] 
+						  >> t[kGuest_]
+						  >> t[kGuestNice_];
 
-// Read and return the number of active jiffies for the system
-unsigned long LinuxParser::ActiveJiffies() {
+		// used formulas from htop source code
 
-	return 0;
-}
+		unsigned long long total_idle    = t[kIdle_] + t[kIOwait_];
+		unsigned long long total_system  = t[kSystem_] + t[kIRQ_] + t[kSoftIRQ_];
+		unsigned long long total_virtual = t[kGuest_] + t[kGuestNice_];
 
+		// add to return map
 
-// Read and return the number of idle jiffies for the system
-unsigned long LinuxParser::IdleJiffies() {
-
-	return 0;
-}
-
-
-// Read and return CPU utilization
-vector<string> LinuxParser::CpuUtilization() {
-	return {};
+		unsigned long long time_total  = t[kUser_] + t[kNice_] + total_idle + total_system + t[kSteal_] + total_virtual;
+		unsigned long long time_active = time_total - total_idle;
+		array<unsigned long long,2> data = {time_total, time_active};
+		output[key] = data;
+	}
+	return output;
 }
 
 

@@ -3,9 +3,18 @@
 
 #include <fstream>
 #include <regex>
+#include <array>
+#include <map>
+#include <iterator>
 #include <string>
+#include <vector>
 
+using std::array;
+using std::map;
+using std::iterator;
+using std::stof;
 using std::string;
+using std::to_string;
 using std::vector;
 
 namespace LinuxParser {
@@ -45,11 +54,7 @@ enum CPUStates {
 	kGuestNice_
 };
 
-vector<string> CpuUtilization();
-unsigned long Jiffies();
-unsigned long ActiveJiffies();
-unsigned long ActiveJiffies(int pid);
-unsigned long IdleJiffies();
+map<string, array<unsigned long long,2>> CpuUtilization();
 
 // Processes
 string Command(int pid);
