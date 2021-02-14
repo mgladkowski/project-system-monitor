@@ -14,19 +14,19 @@ using std::vector;
 class System {
  public:
 
-  Processor&       Cpu();
-  vector<Process>& Processes();
-  string           Kernel();
-  string           OperatingSystem();
-  float            MemoryUtilization();
-  unsigned int     RunningProcesses();
-  unsigned int     TotalProcesses();
-  unsigned long    UpTime();
+	Processor&       Cpu();
+	vector<Process>& Processes();
+	string           Kernel();
+	string           OperatingSystem();
+	float            MemoryUtilization();
+	unsigned int     RunningProcesses();
+	unsigned int     TotalProcesses();
+	unsigned long    UpTime();
 
  private:
 
-  Processor        cpu_;
-  vector<Process>  processes_;
+	Processor        cpu_;
+	vector<Process>  processes_;
 };
 
 #endif
