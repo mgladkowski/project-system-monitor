@@ -1,6 +1,4 @@
 #include <unistd.h>
-#include <cstddef>
-#include <set>
 #include <string>
 #include <vector>
 #include "linux_parser.h"
@@ -8,60 +6,77 @@
 #include "processor.h"
 #include "system.h"
 
-using std::set;
-using std::size_t;
 using std::string;
 using std::vector;
 
 
 // Return the system's CPU
 Processor& System::Cpu() {
-	return cpu_;
+    return cpu_;
 }
 
 
 // Return a container composed of the system's processes
 vector<Process>& System::Processes() {
 
-	vector<int> pids = LinuxParser::Pids();
-	for (int& pid : pids) {
-		break;
-	}
-	return processes_;
+    // fetch current PID list
+    vector<int> pids = LinuxParser::Pids();
+    vector<Process> output;
+
+    // add or update valid processes
+    for (int& pid : pids) {
+
+        auto it = std::find_if(
+            std::begin(processes_), 
+            std::end(processes_),
+            [pid](Process& element) -> bool
+            { return element.Pid() == pid; });
+
+        if (it != processes_.end()) {
+            it->Update();
+            output.push_back(*it);
+        } else
+            output.push_back(Process(pid));
+    }
+
+    std::sort(output.begin(), output.end());
+    processes_ = output;
+
+    return processes_;
 }
 
 
 // Return the system's kernel identifier
 string System::Kernel() {
-	return LinuxParser::Kernel();
+    return LinuxParser::Kernel();
 }
 
 
 // Return the operating system name
 string System::OperatingSystem() {
-	return LinuxParser::OperatingSystem();
+    return LinuxParser::OperatingSystem();
 }
 
 
 // Return the system's memory utilization
 float System::MemoryUtilization() {
-	return LinuxParser::MemoryUtilization();
+    return LinuxParser::MemoryUtilization();
 }
 
 
 // Return the number of processes actively running on the system
 unsigned int System::RunningProcesses() {
-	return LinuxParser::RunningProcesses();
+    return LinuxParser::RunningProcesses();
 }
 
 
 // Return the total number of processes on the system
 unsigned int System::TotalProcesses() {
-	return LinuxParser::TotalProcesses();
+    return LinuxParser::TotalProcesses();
 }
 
 
 // Return the number of seconds since the system started running
 unsigned long System::UpTime() {
-	return LinuxParser::UpTime();
+    return LinuxParser::UpTime();
 }

@@ -3,8 +3,6 @@
 
 #include <string>
 #include <vector>
-
-#include "linux_parser.h"
 #include "process.h"
 #include "processor.h"
 
@@ -25,8 +23,8 @@ class System {
 
  private:
 
-	Processor        cpu_;
-	vector<Process>  processes_ {};
+	Processor       cpu_;
+	vector<Process> processes_ {};
 };
 
 #endif

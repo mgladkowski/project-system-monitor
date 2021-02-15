@@ -12,6 +12,8 @@ It contains relevant attributes as shown below
 class Process {
  public:
 
+    Process(int pid);
+
     int      Pid();
     string   User();
     string   Command();
