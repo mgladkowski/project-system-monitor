@@ -16,26 +16,29 @@ using std::vector;
 // 2% is one bar(|)
 std::string NCursesDisplay::ProgressBar(float percent, int size, bool compact) {
 
-  std::string result {"["};
   float bars {percent * size};
+  std::string result {""};
 
+  if (compact == false) result += "[";
   for (int i{0}; i < size; ++i) {
     result += (bars > 0 && i <= bars) ? '|' : ' ';
   }
-  result += "]";
+  if (compact == true) 
+    return result;
+  else
+    result += "] ";
 
   string display{to_string(percent * 100).substr(0, 4)};
   if (percent < 0.1 || percent == 1.0)
-    display = " " + to_string(percent * 100).substr(0, 3);
-  
-  if (!compact) result += display + " %";
+    display = to_string(percent * 100).substr(0, 3);
+  result += display + string(" %%");
   return result;
 }
 
 void NCursesDisplay::DisplaySystem(System& system, WINDOW* window) {
   
   int row{0};
-  mvwprintw(window, ++row, 2, ("OS: " + system.OperatingSystem()).c_str());
+  mvwprintw(window, ++row, 2, ("OS:     " + system.OperatingSystem()).c_str());
   mvwprintw(window, ++row, 2, ("Kernel: " + system.Kernel()).c_str());
   
   vector<float> cpus = system.Cpu().Utilization();
@@ -44,10 +47,9 @@ void NCursesDisplay::DisplaySystem(System& system, WINDOW* window) {
     if (i==-1) {
 
       // first item is aggregate
-      mvwprintw(window, ++row, 2, "Cpu: ");
+      mvwprintw(window, ++row, 2, "Cpu:    ");
       wattron(window, COLOR_PAIR(1));
-      mvwprintw(window, row, 10, "");
-      wprintw(window, ProgressBar(value,50).c_str());
+      wprintw(window, ProgressBar(value).c_str());
       wattroff(window, COLOR_PAIR(1));
 
     } else {
@@ -55,31 +57,34 @@ void NCursesDisplay::DisplaySystem(System& system, WINDOW* window) {
        // remaining items are individual cores
       if (i % 4 == 0) mvwprintw(window, ++row, 2, "");
       wattron(window, COLOR_PAIR(1));
-      mvwprintw(window, row, 10 + (13 * (i % 4)), to_string(i).c_str());
+      mvwprintw(window, row, 10 + (14 * (i % 4)), "[");
+      wattron(window, COLOR_PAIR(2));
+      wprintw(window, to_string(i).c_str());
+      wattron(window, COLOR_PAIR(1));
       wprintw(window, ProgressBar(value, 10, true).c_str());
-      wattroff(window, COLOR_PAIR(1));
+      wprintw(window, string("]").c_str());
+      wattroff(window, COLOR_PAIR(2));
     }
     i++;
   }
-  
-  mvwprintw(window, ++row, 2, "");
-  mvwprintw(window, ++row, 2, "Memory:");
+  mvwprintw(window, ++row, 2, "Memory: ");
   wattron(window, COLOR_PAIR(1));
   mvwprintw(window, row, 10, "");
   wprintw(window, ProgressBar(system.MemoryUtilization()).c_str());
   wattroff(window, COLOR_PAIR(1));
   mvwprintw(window, ++row, 2,
-            ("Total Processes: " + to_string(system.TotalProcesses())).c_str());
+            ("Total Processes:   " + to_string(system.TotalProcesses())).c_str());
   mvwprintw(
       window, ++row, 2,
       ("Running Processes: " + to_string(system.RunningProcesses())).c_str());
-  mvwprintw(window, ++row, 2,
-            ("Up Time: " + Format::ElapsedTime(system.UpTime())).c_str());
+  mvwprintw(window, ++row, 2, 
+            ("Up Time:           " + Format::ElapsedTime(system.UpTime())).c_str());
   wrefresh(window);
 }
 
 void NCursesDisplay::DisplayProcesses(std::vector<Process>& processes,
                                       WINDOW* window, int n) {
+
   int row{0};
   int const pid_column{2};
   int const user_column{9};
@@ -126,6 +131,7 @@ void NCursesDisplay::Display(System& system, int n) {
     init_pair(1, COLOR_BLUE, COLOR_BLACK);
     init_pair(2, COLOR_GREEN, COLOR_BLACK);
     box(system_window, 0, 0);
+    werase(process_window);  // previous values were leaving artifacts, this is how I solved it
     box(process_window, 0, 0);
     DisplaySystem(system, system_window);
     DisplayProcesses(system.Processes(), process_window, n);
