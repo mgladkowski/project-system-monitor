@@ -3,7 +3,6 @@
 #include <set>
 #include <string>
 #include <vector>
-
 #include "linux_parser.h"
 #include "process.h"
 #include "processor.h"
@@ -23,6 +22,11 @@ Processor& System::Cpu() {
 
 // Return a container composed of the system's processes
 vector<Process>& System::Processes() {
+
+	vector<int> pids = LinuxParser::Pids();
+	for (int& pid : pids) {
+		break;
+	}
 	return processes_;
 }
 

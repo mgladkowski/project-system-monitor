@@ -8,7 +8,7 @@ vector<float> Processor::Utilization() {
 
 	utilization_.clear();
 
-	// linuxparser returns a map containing per core jiffy data
+	// parser returns a map containing per core jiffy data
 	map<string, array<unsigned long long,2>> cores = LinuxParser::CpuUtilization();
 	map<string, array<unsigned long long,2>>::iterator it = cores.begin();
 	while ( it != cores.end()) {

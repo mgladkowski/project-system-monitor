@@ -26,7 +26,7 @@ class System {
  private:
 
 	Processor        cpu_;
-	vector<Process>  processes_;
+	vector<Process>  processes_ {};
 };
 
 #endif

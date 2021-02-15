@@ -1,6 +1,5 @@
 #include <dirent.h>
 #include <unistd.h>
-
 #include "helpers.h"
 #include "linux_parser.h"
 
@@ -173,20 +172,30 @@ map<string, array<unsigned long long,2>> LinuxParser::CpuUtilization() {
 
 
 // Read and return the command associated with a process
-string LinuxParser::Command(int pid) { return string(); }
+string LinuxParser::Command(int pid) {
+	return string();
+}
 
 
 // Read and return the memory used by a process
-string LinuxParser::Ram(int pid) { return string(); }
+string LinuxParser::Ram(int pid) { 
+	return string(); 
+}
 
 
 // Read and return the user ID associated with a process
-string LinuxParser::Uid(int pid) { return string(); }
+string LinuxParser::Uid(int pid) { 
+	return string(); 
+}
 
 
 // Read and return the user associated with a process
-string LinuxParser::User(int pid) { return string(); }
+string LinuxParser::User(int pid) { 
+	return string(); 
+}
 
 
 // Read and return the uptime of a process
-unsigned long LinuxParser::UpTime(int pid) { return 0; }
+unsigned long LinuxParser::UpTime(int pid) { 
+	return 0; 
+}
