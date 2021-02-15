@@ -23,7 +23,7 @@ vector<Process>& System::Processes() {
     vector<int> pids = LinuxParser::Pids();
     vector<Process> output;
 
-    // add or update valid processes
+    // add or update valid processes, keeping existing ones
     for (int& pid : pids) {
 
         auto it = std::find_if(
@@ -39,6 +39,7 @@ vector<Process>& System::Processes() {
             output.push_back(Process(pid));
     }
 
+    // sort processes, and discard ended ones
     std::sort(output.begin(), output.end());
     processes_ = output;
 
