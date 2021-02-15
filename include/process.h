@@ -23,7 +23,7 @@ class Process {
 
     bool operator<(Process const& a) const;
 
-    void     Update(unsigned long int system_uptime_s);
+    void     Update();
 
  private:
 

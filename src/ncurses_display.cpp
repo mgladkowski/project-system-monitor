@@ -3,7 +3,6 @@
 #include <string>
 #include <thread>
 #include <vector>
-
 #include "format.h"
 #include "ncurses_display.h"
 #include "system.h"
@@ -31,7 +30,7 @@ std::string NCursesDisplay::ProgressBar(float percent, int size, bool compact) {
   string display{to_string(percent * 100).substr(0, 4)};
   if (percent < 0.1 || percent == 1.0)
     display = to_string(percent * 100).substr(0, 3);
-  result += display + string(" %%");
+  result += display + string("%%");
   return result;
 }
 
@@ -57,7 +56,7 @@ void NCursesDisplay::DisplaySystem(System& system, WINDOW* window) {
        // remaining items are individual cores
       if (i % 4 == 0) mvwprintw(window, ++row, 2, "");
       wattron(window, COLOR_PAIR(1));
-      mvwprintw(window, row, 10 + (14 * (i % 4)), "[");
+      mvwprintw(window, row, 10 + (13 * (i % 4)), "[");
       wattron(window, COLOR_PAIR(2));
       wprintw(window, to_string(i).c_str());
       wattron(window, COLOR_PAIR(1));
@@ -117,6 +116,7 @@ void NCursesDisplay::DisplayProcesses(std::vector<Process>& processes,
 }
 
 void NCursesDisplay::Display(System& system, int n) {
+
   initscr();      // start ncurses
   noecho();       // do not print input values
   cbreak();       // terminate ncurses on ctrl + c
@@ -128,6 +128,8 @@ void NCursesDisplay::Display(System& system, int n) {
       newwin(3 + n, x_max - 1, system_window->_maxy + 1, 0);
 
   while (1) {
+    
+    // draw screen
     init_pair(1, COLOR_BLUE, COLOR_BLACK);
     init_pair(2, COLOR_GREEN, COLOR_BLACK);
     box(system_window, 0, 0);
@@ -139,6 +141,12 @@ void NCursesDisplay::Display(System& system, int n) {
     wrefresh(process_window);
     refresh();
     std::this_thread::sleep_for(std::chrono::seconds(1));
+
+    // detect keypress
+    timeout(0);
+    unsigned char x = getch();
+    if (x == 27 || x == 'q' || x == 'Q') 
+      break;   // Quit : ESC|q|Q
   }
   endwin();
 }

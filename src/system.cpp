@@ -20,7 +20,6 @@ Processor& System::Cpu() {
 vector<Process>& System::Processes() {
 
     vector<Process> output;
-    unsigned long uptime = this->UpTime();
 
     // fetch current PID list
     vector<int> pids = LinuxParser::Pids();
@@ -35,7 +34,7 @@ vector<Process>& System::Processes() {
             { return element.Pid() == pid; });
 
         if (it != processes_.end()) {
-            it->Update(uptime);
+            it->Update();
             output.push_back(*it);
         } else
             output.push_back(Process(pid));
