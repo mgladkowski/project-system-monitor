@@ -2,7 +2,7 @@
 
 /* Return the CPU utilization
  *
- * Returns a map of string core ID and float utilization value
+ * Returns vector of utilization per core, first value is aggregate
  */
 vector<float> Processor::Utilization() {
 

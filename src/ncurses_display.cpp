@@ -41,11 +41,9 @@ void NCursesDisplay::DisplaySystem(System& system, WINDOW* window) {
   vector<float> cpus = system.Cpu().Utilization();
   int i = -1;
   for (float& value : cpus) {
-
     if (i==-1) {
 
       // first item is aggregate
-
       mvwprintw(window, ++row, 2, "Cpu: ");
       wattron(window, COLOR_PAIR(1));
       mvwprintw(window, row, 10, "");
@@ -97,7 +95,10 @@ void NCursesDisplay::DisplayProcesses(std::vector<Process>& processes,
   mvwprintw(window, row, time_column, "TIME+");
   mvwprintw(window, row, command_column, "COMMAND");
   wattroff(window, COLOR_PAIR(2));
-  for (int i = 0; i < n; ++i) {
+
+  int end = ((int)processes.size() > n) ? n : (int)processes.size();
+  for (int i = 0; i < end; ++i) {
+
     mvwprintw(window, ++row, pid_column, to_string(processes[i].Pid()).c_str());
     mvwprintw(window, row, user_column, processes[i].User().c_str());
     float cpu = processes[i].CpuUtilization() * 100;
