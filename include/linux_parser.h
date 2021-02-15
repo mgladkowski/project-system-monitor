@@ -58,10 +58,11 @@ map<string, array<unsigned long long,2>> CpuUtilization();
 
 // Processes
 string Command(int pid);
-string Ram(int pid);
 string Uid(int pid);
 string User(int pid);
-unsigned long UpTime(int pid);
+string Ram(int pid);
+unsigned long long CpuTime(int pid);
+unsigned long long StartTime(int pid);
 
 };  // namespace LinuxParser
 

@@ -14,7 +14,10 @@ using std::vector;
 Process::Process(int pid) {
     
     pid_ = pid;
-    this->Update();
+    command_ = LinuxParser::Command(pid_);
+    user_ = LinuxParser::User(pid_);
+    start_time_ = LinuxParser::StartTime(pid_);
+    this->Update(0);
 }
 
 
@@ -49,7 +52,7 @@ string Process::Ram() {
 
 
 // Return the age of this process (in seconds)
-long int Process::UpTime() { 
+long int Process::UpTime() {
     return uptime_;
 }
 
@@ -62,12 +65,32 @@ bool Process::operator<(Process const& a) const {
 }
 
 
-// Update the object with current stats
-void Process::Update() {
+/* Update the object with current stats
+ * Requires the current system uptime in seconds
+ */
+void Process::Update(unsigned long int system_uptime_s) {
 
+    unsigned long long system_time = system_uptime_s * sysconf(_SC_CLK_TCK);
+
+    // ram
     ram_ = LinuxParser::Ram(pid_);
-    uptime_ = LinuxParser::UpTime(pid_);
-    sys_ticks_ = 0;
-    sys_active_ = 0;
-    cpu_ = 0.0;
+
+    // cpu time
+    unsigned long long cpu_time = LinuxParser::CpuTime(pid_);
+    unsigned long long cpu_used = cpu_time - last_cpu_time_;
+
+    if (system_time < start_time_) system_time = start_time_;
+
+    /* elapsed time since process spawned
+     * unclear whether this was supposed to be CPU wall time */
+    unsigned long long elapsed_time = system_time - last_sys_time_;
+    unsigned long long process_time = system_time - start_time_;
+    uptime_ = process_time / sysconf(_SC_CLK_TCK);
+
+    // cpu utilization
+    cpu_ = (elapsed_time > 0) ? (float)cpu_used / elapsed_time : 0.0;
+
+    // store current values
+    last_cpu_time_ = cpu_time;
+    last_sys_time_ = system_time;
 }

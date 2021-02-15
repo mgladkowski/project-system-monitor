@@ -19,9 +19,11 @@ Processor& System::Cpu() {
 // Return a container composed of the system's processes
 vector<Process>& System::Processes() {
 
+    vector<Process> output;
+    unsigned long uptime = this->UpTime();
+
     // fetch current PID list
     vector<int> pids = LinuxParser::Pids();
-    vector<Process> output;
 
     // add or update valid processes, keeping existing ones
     for (int& pid : pids) {
@@ -33,13 +35,13 @@ vector<Process>& System::Processes() {
             { return element.Pid() == pid; });
 
         if (it != processes_.end()) {
-            it->Update();
+            it->Update(uptime);
             output.push_back(*it);
         } else
             output.push_back(Process(pid));
     }
 
-    // sort processes, and discard ended ones
+    // sort and store valid processes
     std::sort(output.begin(), output.end());
     processes_ = output;
 

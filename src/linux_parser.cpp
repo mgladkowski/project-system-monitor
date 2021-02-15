@@ -9,7 +9,7 @@ string LinuxParser::Kernel() {
 
 	string value = "";
 	string cut;
-	string line = Helpers::grep(kProcDirectory + kVersionFilename, "");
+	string line = Helpers::grep(kProcDirectory + kVersionFilename);
 
 	std::istringstream linestream(line);
 	linestream >> cut >> cut >> value;
@@ -173,29 +173,85 @@ map<string, array<unsigned long long,2>> LinuxParser::CpuUtilization() {
 
 // Read and return the command associated with a process
 string LinuxParser::Command(int pid) {
-	return string();
-}
 
-
-// Read and return the memory used by a process
-string LinuxParser::Ram(int pid) { 
-	return string(); 
+	return Helpers::grep(kProcDirectory + to_string(pid) + kCmdlineFilename);
 }
 
 
 // Read and return the user ID associated with a process
 string LinuxParser::Uid(int pid) { 
-	return string(); 
+
+	string key = "Uid:";
+	string value = "";
+	string line = Helpers::grep(kProcDirectory + to_string(pid) + kStatusFilename, key);
+
+	std::istringstream linestream(line);
+	linestream >> key >> value;
+	return value;
 }
 
 
 // Read and return the user associated with a process
 string LinuxParser::User(int pid) { 
-	return string(); 
+
+	string value = "";
+	string line = Helpers::grep(kPasswordPath, ":x:"+Uid(pid)+":");
+
+	std::replace(line.begin(), line.end(), ':', ' ');
+	std::istringstream linestream(line);
+	linestream >> value;
+	return value;
 }
 
 
-// Read and return the uptime of a process
-unsigned long LinuxParser::UpTime(int pid) { 
-	return 0; 
+// Read and return the memory used by the process in MB
+string LinuxParser::Ram(int pid) {
+
+	string line = Helpers::grep(kProcDirectory + to_string(pid) + kStatusFilename, "VmSize:");
+	std::istringstream linestream(line);
+	
+	string word;
+	long value;
+	linestream >> word >> value;
+	return Helpers::format_number((double)value/1024.0, 1);
+}
+
+
+// Read and return cpu clock ticks elapsed of this process
+unsigned long long LinuxParser::CpuTime(int pid) {
+
+	string line = Helpers::grep(kProcDirectory + to_string(pid) + kStatFilename);
+	std::istringstream linestream(line);
+	
+	string word;
+	unsigned long long utime,stime,cutime,cstime;
+	int i = 0;
+    while (linestream >> word) {
+        i++;
+		if (i == 13) {
+			linestream >> utime >> stime >> cutime >> cstime;
+			break;
+		}
+	}
+	return utime+stime+cutime+cstime;
+}
+
+
+// Read and return starting uptime of this process
+unsigned long long LinuxParser::StartTime(int pid) {
+
+	string line = Helpers::grep(kProcDirectory + to_string(pid) + kStatFilename);
+	std::istringstream linestream(line);
+	
+	string word;
+	unsigned long long starttime;
+	int i = 0;
+    while (linestream >> word) {
+        i++;
+		if (i == 21) {
+			linestream >> starttime;
+			break;
+		}
+	}
+	return starttime;
 }

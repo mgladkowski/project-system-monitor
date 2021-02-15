@@ -1,6 +1,8 @@
+#include <math.h>
 #include <fstream>
 #include <regex>
 #include <string>
+#include <sstream>
 #include <vector>
 
 #include "helpers.h"
@@ -52,7 +54,9 @@ vector<string> Helpers::grep(const string& filename, const vector<string> keys) 
 
 /*
  * String helpers
- * Credit to : https://www.techiedelight.com/trim-string-cpp-remove-leading-trailing-spaces/
+ * Credit for time savings to : 
+ * https://www.techiedelight.com/trim-string-cpp-remove-leading-trailing-spaces/
+ * https://stackoverflow.com/questions/1343890/how-do-i-restrict-a-float-value-to-only-two-places-after-the-decimal-point-in-c
  */
 
 string Helpers::ltrim(const string& s) {
@@ -67,4 +71,13 @@ string Helpers::rtrim(const string& s) {
 
 string Helpers::trim(const string& s) {
     return ltrim(rtrim(s));
+}
+
+
+string Helpers::format_number(const double x, const int digits) {
+    std::stringstream ss;
+    ss << std::fixed;
+    ss.precision(digits);
+    ss << x;
+    return ss.str();
 }

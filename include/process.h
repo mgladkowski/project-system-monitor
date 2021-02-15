@@ -20,21 +20,23 @@ class Process {
     float    CpuUtilization();
     string   Ram();
     long int UpTime();
+
     bool operator<(Process const& a) const;
 
-    void     Update();
+    void     Update(unsigned long int system_uptime_s);
 
  private:
 
     int      pid_ {0};
-    string   user_ {};
-    string   command_ {};
+    string   user_ {""};
+    string   command_ {""};
     float    cpu_ {0.0};
-    string   ram_ {};
-    long int uptime_ {0};
+    string   ram_ {""};
+    unsigned long uptime_ {0};
 
-    unsigned long long sys_ticks_ {0};
-    unsigned long long sys_active_ {0};
+    unsigned long long last_cpu_time_ {0};
+    unsigned long long last_sys_time_ {0};
+    unsigned long long start_time_ {0};
 };
 
 #endif
