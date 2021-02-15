@@ -8,7 +8,7 @@ It was edited using Visual Studio Code on Windows 10.
 
 Compile environment was Ubuntu 20.04 via Windows Subsystem for Linux.
 
-![Screenshot of submission output](images/Screenshot 2021-02-15 141723.png)
+![Screenshot of submission output](images/screenshot.png)
 
 
 ## Original readme follows...
