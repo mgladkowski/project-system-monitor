@@ -76,21 +76,21 @@ void Process::Update() {
     ram_ = LinuxParser::Ram(pid_);
 
     // cpu time
-    unsigned long long cpu_time = LinuxParser::CpuTime(pid_);
-    unsigned long long cpu_used = cpu_time - last_cpu_time_;
+    const unsigned long long cpu_time = LinuxParser::CpuTime(pid_);
+    const unsigned long long cpu_used = cpu_time - last_cpu_time_;
 
     /* elapsed time since process spawned
      * unclear whether this was supposed to be CPU wall time */
-    unsigned long system_uptime_s = LinuxParser::UpTime();
+    const unsigned long system_uptime_s = LinuxParser::UpTime();
     unsigned long long system_time = system_uptime_s * sysconf(_SC_CLK_TCK);
     if (system_time < start_time_) system_time = start_time_;
 
-    unsigned long long elapsed_time = system_time - last_sys_time_;
-    unsigned long long process_time = system_time - start_time_;
+    const unsigned long long elapsed_time = system_time - last_sys_time_;
+    const unsigned long long process_time = system_time - start_time_;
     uptime_ = process_time / sysconf(_SC_CLK_TCK);
 
     // cpu utilization
-    cpu_ = (elapsed_time > 0) ? (double)cpu_used / elapsed_time : 0.0;
+    cpu_ = (elapsed_time > 0) ? static_cast<double>(cpu_used) / elapsed_time : 0.0;
     if (cpu_ > 1.0) cpu_ = 1.0;  // constrain edge cases when CPU walled at 100%
 
     // store current values

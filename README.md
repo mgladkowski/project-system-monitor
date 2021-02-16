@@ -1,5 +1,14 @@
 # CppND-System-Monitor
 
+## Suggestions Applied
+
+Project passed first review.  I applied suggestions as follows:
+
+- static_cast instead of C like cast
+- use of const when initializing vars that won't change during use
+- formatting, small adj to consistency and unwanted comments
+
+
 ## Submission
 
 This is my first submission of the completed project.

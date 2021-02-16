@@ -224,7 +224,7 @@ unsigned long long LinuxParser::CpuTime(int pid) {
 	std::istringstream linestream(line);
 	
 	string word;
-	unsigned long long utime,stime,cutime,cstime;
+	unsigned long long utime, stime, cutime, cstime;
 	int i = 0;
     while (linestream >> word) {
         i++;
@@ -233,7 +233,7 @@ unsigned long long LinuxParser::CpuTime(int pid) {
 			break;
 		}
 	}
-	return utime+stime+cutime+cstime;
+	return utime + stime + cutime + cstime;
 }
 
 

@@ -16,9 +16,9 @@ std::string Format::ElapsedTime(long seconds) {
 
     // individual time segments
 
-    int hh = (int)seconds / 3600;
-    int mm = (int)(seconds - hh*3600) / 60;
-    int ss = (int)(seconds - hh*3600 - mm*60);
+    const int hh = seconds / 3600;
+    const int mm = (seconds - hh*3600) / 60;
+    const int ss = (seconds - hh*3600 - mm*60);
 
     // format the time using a stringstream
 
@@ -29,7 +29,5 @@ std::string Format::ElapsedTime(long seconds) {
         << std::setw(2) << mm << ':' 
         << std::setw(2) << ss;
    
-    // return the string
-
     return ssout.str();
 }

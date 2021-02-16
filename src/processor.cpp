@@ -18,11 +18,11 @@ vector<float> Processor::Utilization() {
 		array<unsigned long long,2> data = it->second;
 
 		// difference from last used values
-		unsigned long long delta_time   = data[0] - total_[key];
-		unsigned long long delta_active = data[1] - active_[key];
+		const unsigned long long delta_time   = data[0] - total_[key];
+		const unsigned long long delta_active = data[1] - active_[key];
 
 		// utilization computed from difference since last queried
-		float used = (delta_time > 0) ? (float)delta_active / delta_time : 0.0;
+		const float used = (delta_time > 0) ? static_cast<float>(delta_active) / delta_time : 0.0;
 		utilization_.push_back(used);
 		
 		// update last used values
